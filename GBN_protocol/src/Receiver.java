@@ -1,46 +1,38 @@
-import java.util.TimerTask;
+
 
 public class Receiver {
 
-    private String data;
-    private int windowBegin;
-    private int windowEnd;
-    private int windowSize;
-    private TaskTimer[] timers;
-    private DataPath dataPath;
-    private Frame[] receivedFrames;
-    private TimerTask[] tasks;
+    int windowSize;
+    DataPath dataPath;
+    private final int[] expectedseqNum;
+    private int currentFrameseqNum;
 
-
-    public void Receiver(int windowSize, DataPath dataPath){
+     Receiver(int windowSize, DataPath dataPath){
         this.windowSize = windowSize;
         this.dataPath = dataPath;
-        this.receivedFrames = new Frame[windowSize];
+        expectedseqNum = new int[windowSize+1];
+        for (int i = 0 ; i < windowSize+1 ; i++)
+            expectedseqNum[i] = i;
+        currentFrameseqNum = 0;
     }
 
 
-    public void receiveWindow(){
+    public void setCurrentFrameSeqNum(int currentFrameSeqNum){
+         this.currentFrameseqNum = currentFrameSeqNum;
+    }
 
-        //Check The matching of sender and receiver size
-        if(dataPath.getDataBuffer().size() != windowSize)
-            System.out.println("Sent window size is not the same as Receiver window size");
+    public void receiveFrame(){
 
-        for (int i = 0 ; i < windowSize ; i++){
-            //get frames from the sender
-            receivedFrames[i] = dataPath.receive();
-
-            //check if the received frame is not the expected one
-            if(receivedFrames[i].getFrameID() != i) {
-                //timeout the receiver to send the missed frame again
-                System.out.println("Timeout, Frame No. [" + i + "] is misssing");
-            }
-
+         //Check the received ID is the expected one
+        if(dataPath.receive().getSeqNo() == expectedseqNum[currentFrameseqNum]) {
+            dataPath.sendAck(currentFrameseqNum);
+            setCurrentFrameSeqNum(currentFrameseqNum++);
+            System.out.println("Frame Received Successfully");
+        }else {
+            //wait until time out
+            System.out.println("Received frame is incorrect");
         }
-
-
-
     }
-
-
 
 }
+
