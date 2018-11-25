@@ -52,7 +52,7 @@ public class Sender {
     	while (currentPacketNo < dataLength) {
     		
     		sendFrame(currentPacketNo, currentSeqNo);
-    		System.out.println("Receiver: Packet " + currentPacketNo + " with sequence number" + currentSeqNo
+    		System.out.println("Receiver: Packet " + currentPacketNo + " with sequence number " + currentSeqNo
     				+ " has been sent");
     		currentPacketNo++;
     		currentSeqNo = (currentSeqNo+1) % (windowSize+1);
