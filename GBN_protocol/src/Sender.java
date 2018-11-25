@@ -52,7 +52,7 @@ public class Sender {
     	while (currentPacketNo < dataLength) {
     		
     		sendFrame(currentPacketNo, currentSeqNo);
-    		System.out.println("Receiver: Packet " + currentPacketNo + " with sequence number " + currentSeqNo
+    		System.out.println("Sender: Packet " + currentPacketNo + " with sequence number " + currentSeqNo
     				+ " has been sent");
     		currentPacketNo++;
     		currentSeqNo = (currentSeqNo+1) % (windowSize+1);
@@ -61,8 +61,8 @@ public class Sender {
     			
     			if(timeoutOcurred) {
     				
-    				System.out.println("Receiver: Timer " + timeoutNo + " timeout!");
-    				System.out.println("Receiver: Resending the frame.....");
+    				System.out.println("Sender: Timer " + timeoutNo + " timeout!");
+    				System.out.println("Sender: Resending the frame.....");
     				currentPacketNo -= windowSize; 
     				currentSeqNo -= windowSize % (windowSize + 1);
     				framesToSend = windowSize;
@@ -73,7 +73,7 @@ public class Sender {
     				
     			}else if(dataPath.hasAck()) {
     				
-    				System.out.println("Receiver: Ack" + dataPath.receiveAck() + "has been received.");
+    				System.out.println("Sender: Ack" + dataPath.receiveAck() + "has been received.");
     				framesToSend++;
     				
     			}
@@ -81,6 +81,8 @@ public class Sender {
     		}
     		
     	}
+    	
+    	System.out.println("Sender: All data have been sent succesfully.");
 
     }
 
