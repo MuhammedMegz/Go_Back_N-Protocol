@@ -1,24 +1,29 @@
- class Frame {
+class Frame {
 
     private char frameData;  //Carried Data By The Frame
     private int seqNo;
 
-     public char getFrameData() {
-         return frameData;
-     }
+    Frame( int seqNo, char frameData){
+        this.seqNo = seqNo;
+        this.frameData = frameData;
+    }
 
-     public void setFrameData(char frameData) {
-         this.frameData = frameData;
-     }
+    public char getFrameData() {
+        return frameData;
+    }
 
-     public int getSeqNo() {
-         return seqNo;
-     }
-     
-     public void setSeqNo(int seqNo){
+    public void setFrameData(char frameData) {
+        this.frameData = frameData;
+    }
 
-         this.seqNo = seqNo;
+    public int getSeqNo() {
+        return seqNo;
+    }
 
-     }
-     
- }
+    public void setSeqNo(int seqNo){
+
+        this.seqNo = seqNo;
+
+    }
+
+}
