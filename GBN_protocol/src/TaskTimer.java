@@ -1,7 +1,5 @@
-import java.sql.Time;
 import java.util.Timer;
 import java.util.TimerTask;
-import java.util.concurrent.TimeUnit;
 
 public class TaskTimer {
 
@@ -12,8 +10,12 @@ public class TaskTimer {
         tTimer = new Timer();
     }
 
-    public void start(TimerTask tTask, long duration, long delay){
-        tTimer.schedule(tTask, duration, delay);
+    public void start(TimerTask tTask, long delay){
+        tTimer.schedule(tTask, delay);
+    }
+    
+    public void reset() {
+    	tTimer.cancel();
     }
 
 
