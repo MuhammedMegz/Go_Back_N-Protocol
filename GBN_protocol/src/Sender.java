@@ -1,4 +1,6 @@
 import java.util.TimerTask;
+import java.net.*;
+import java.io.*;
 
 public class Sender {
 
@@ -9,31 +11,31 @@ public class Sender {
     private int windowSize;
     private boolean timeoutOcurred;
     private int timeoutNo;
-    private DataPath dataPath;
+    private Socket socket;
     private TaskTimer[] timers;
     private Frame[] frames;
     private TimerTask[] tasks;
     
     
-    public Sender(int windowSize, DataPath dataPath){
+    public Sender(int windowSize, Socket socket){
         this.windowSize = windowSize;
         currentPacketNo = 0;
         currentSeqNo = 0;
         framesToSend = windowSize;
         timeoutOcurred = false;
-        this.dataPath = dataPath;
+        this.socket = socket;
         this.frames = new Frame[windowSize];
         this.tasks = new TimerTask[windowSize];
         timers = new TaskTimer[windowSize];
     }
 
-    public Sender(int windowSize, String data, DataPath dataPath){
+    public Sender(int windowSize, String data, Socket socket){
         this.windowSize = windowSize;
         currentPacketNo = 0;
         currentSeqNo = 0;
         framesToSend = windowSize;
         timeoutOcurred = false;
-        this.dataPath = dataPath;
+        this.socket = socket;
         setData(data);
         this.frames = new Frame[windowSize];
         this.tasks = new TimerTask[windowSize];
@@ -104,7 +106,7 @@ public class Sender {
         if(timers[packetNo % windowSize] == null) {
         	timers[packetNo % windowSize] = new TaskTimer();
         }
-        timers[packetNo % windowSize].start(tasks[packetNo % windowSize], 5000);
+        timers[packetNo % windowSize].start(tasks[packetNo % windowSize], 100);
 
     }
 
