@@ -21,10 +21,10 @@ public class Sender {
         currentSeqNo = 0;
         framesToSend = windowSize;
         timeoutOcurred = false;
-        timers = new TaskTimer[windowSize];
         this.dataPath = dataPath;
-        frames = new Frame[windowSize];
-        tasks = new TimerTask[windowSize+1];
+        this.frames = new Frame[windowSize];
+        this.tasks = new TimerTask[windowSize];
+        timers = new TaskTimer[windowSize];
     }
 
     public Sender(int windowSize, String data, DataPath dataPath){
@@ -33,11 +33,11 @@ public class Sender {
         currentSeqNo = 0;
         framesToSend = windowSize;
         timeoutOcurred = false;
-        timers = new TaskTimer[windowSize];
         this.dataPath = dataPath;
         setData(data);
-        frames = new Frame[windowSize];
-        tasks = new TimerTask[windowSize];
+        this.frames = new Frame[windowSize];
+        this.tasks = new TimerTask[windowSize];
+        timers = new TaskTimer[windowSize];
     }
 
     public void setData(String data){
@@ -52,6 +52,8 @@ public class Sender {
     	while (currentPacketNo < dataLength) {
     		
     		sendFrame(currentPacketNo, currentSeqNo);
+    		System.out.println("Receiver: Packet " + currentPacketNo + " with sequence number" + currentSeqNo
+    				+ " has been sent");
     		currentPacketNo++;
     		currentSeqNo = (currentSeqNo+1) % (windowSize+1);
     		framesToSend--;
@@ -59,14 +61,19 @@ public class Sender {
     			
     			if(timeoutOcurred) {
     				
+    				System.out.println("Receiver: Timer " + timeoutNo + " timeout!");
+    				System.out.println("Receiver: Resending the frame.....");
     				currentPacketNo -= windowSize; 
     				currentSeqNo -= windowSize % (windowSize + 1);
     				framesToSend = windowSize;
     				timeoutOcurred = false;
+    				for(int i=0; i< windowSize; i++) {//reset all timers
+    					timers[i].reset();
+    				}
     				
     			}else if(dataPath.hasAck()) {
     				
-    				dataPath.receiveAck();
+    				System.out.println("Receiver: Ack" + dataPath.receiveAck() + "has been received.");
     				framesToSend++;
     				
     			}
@@ -79,6 +86,9 @@ public class Sender {
 
     private void sendFrame(int packetNo, int seqNo){
 
+    	if(frames[packetNo % windowSize] == null) {
+    		frames[packetNo % windowSize] = new Frame();
+    	}
         frames[packetNo % windowSize].setFrameData(data.charAt(packetNo));
         frames[packetNo % windowSize].setSeqNo(seqNo);
         dataPath.send(frames[packetNo % windowSize]);
@@ -89,7 +99,10 @@ public class Sender {
             	timeoutNo = packetNo % windowSize;
             }
         };
-        timers[packetNo % windowSize].start(tasks[packetNo % windowSize], 1000);
+        if(timers[packetNo % windowSize] == null) {
+        	timers[packetNo % windowSize] = new TaskTimer();
+        }
+        timers[packetNo % windowSize].start(tasks[packetNo % windowSize], 5000);
 
     }
 
