@@ -1,9 +1,17 @@
+import java.util.LinkedList;
 import java.util.Queue;
 
 public class DataPath {
 
     private Queue<Frame> dataBuffer;
     private Queue<Integer> ackBuffer;
+
+
+
+    DataPath(){
+        dataBuffer = new LinkedList<>();
+        ackBuffer = new LinkedList<>();
+    }
 
     public boolean hasData(){
         if(dataBuffer.size() == 0)
