@@ -3,6 +3,10 @@ class Frame {
     private char frameData;  //Carried Data By The Frame
     private int seqNo;
 
+    Frame(){
+    	
+    }
+    
     Frame( int seqNo, char frameData){
         this.seqNo = seqNo;
         this.frameData = frameData;
